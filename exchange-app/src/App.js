@@ -9,12 +9,13 @@ const CurrencyExchange = () => {
   const [currency2, setCurrency2] = useState('EUR');
 
   useEffect(() => {
+    // online exchange rate API
     fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`)
       .then(response => response.json())
       .then(data => {
         setExchangeRates(data.rates);
       })
-      .catch(error => console.error('Error fetching exchange rates:', error));
+      .catch(error => console.error('Error with exchange rates:', error));
   }, [baseCurrency]);
 
   const handleBaseCurrencyChange = (event) => {
@@ -29,12 +30,12 @@ const CurrencyExchange = () => {
     }
   };
 
-  const handleCurrency1Change = (event) => {
+  const USDCurrencyChange = (event) => {
     setCurrency1(event.target.value);
     setAmount2(amount1 * exchangeRates[event.target.value]);
   };
 
-  const handleCurrency2Change = (event) => {
+  const EUROCurrencyChange = (event) => {
     setCurrency2(event.target.value);
     setAmount2(amount1 * exchangeRates[event.target.value]);
   };
@@ -47,21 +48,23 @@ const CurrencyExchange = () => {
     }
   };
 
+  const majorCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'INR', 'KRW'];
+
   return (
     <div className="currency-exchange">
       <h1>Simple Currency Exchange</h1>
-      <div className="base-currency">
+      <nav className="navbar">
         <label>Select Base Currency:</label>
         <select value={baseCurrency} onChange={handleBaseCurrencyChange}>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="GBP">GBP</option>
+          {majorCurrencies.map(currency => (
+            <option key={currency} value={currency}>{currency}</option>
+          ))}
         </select>
-      </div>
+      </nav>
       <div className="exchange-rates">
         <h2>Exchange Rates:</h2>
         <ul>
-          {Object.keys(exchangeRates).map(currency => (
+          {majorCurrencies.map(currency => (
             <li key={currency}>{currency}: {exchangeRates[currency]}</li>
           ))}
         </ul>
@@ -71,22 +74,22 @@ const CurrencyExchange = () => {
         <div className="converter-input">
           <label>Amount:</label>
           <input type="number" value={amount1} onChange={handleAmountChange} />
-          <select value={currency1} onChange={handleCurrency1Change}>
-            {Object.keys(exchangeRates).map(currency => (
+          <select value={currency1} onChange={USDCurrencyChange}>
+            {majorCurrencies.map(currency => (
               <option key={currency} value={currency}>{currency}</option>
             ))}
           </select>
           <span>to</span>
           <input type="number" value={amount2} onChange={handleAmount2Change} />
-          <select value={currency2} onChange={handleCurrency2Change}>
-            {Object.keys(exchangeRates).map(currency => (
+          <select value={currency2} onChange={EUROCurrencyChange}>
+            {majorCurrencies.map(currency => (
               <option key={currency} value={currency}>{currency}</option>
             ))}
           </select>
         </div>
       </div>
       <footer>
-        <p><a href="https://www.instagram.com/chipmonk02/?next=%2F">instagram</a></p>
+        <p><a href="https://www.instagram.com/chipmonk02/?next=%2F">Instagram</a></p>
       </footer>
     </div>
   );

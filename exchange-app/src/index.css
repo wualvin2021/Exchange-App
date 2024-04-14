@@ -2,9 +2,25 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #61dafb;
+  }
 }
 
-.base-currency select {
+@media screen and (max-width: 600px) {
+  .currency-exchange {
+    padding: 10px;
+  }
+}
+
+.navbar {
+  text-align: center;
+  font-size: large;
+}
+
+.navbar select {
   margin-bottom: 10px;
 }
 
@@ -16,7 +32,7 @@
   list-style: none;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust column width as needed */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
 }
 
@@ -39,9 +55,12 @@
   margin-right: 10px;
 }
 
-.converter-input select,
-.converter-input input[type="number"] {
+.converter-input select, .converter-input input[type="number"] {
   padding: 5px;
   margin-right: 10px;
-  width: 100px; /* Adjust width as needed */
+  width: 100px;
+}
+
+.exchange-rates ul li:nth-child(n+16) {
+  display: none;
 }
