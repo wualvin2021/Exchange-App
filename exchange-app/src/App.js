@@ -20,15 +20,16 @@ const CurrencyExchange = () => {
   }, [baseCurrency]);
 
   useEffect(() => {
-    // Online exchange rate API for currency2
-    fetch(`https://api.exchangerate-api.com/v4/latest/${currency1}`)
-      .then(response => response.json())
-      .then(data => {
-        setConverterRates(data.rates);
-        setAmount2(parseFloat((amount1 * data.rates[currency2]).toFixed(2))); // Round to 2 decimal places
-      })
-      .catch(error => console.error('Error fetching converter rates:', error));
-  }, [currency1, amount1, currency2]);
+    // Online exchange rate API for selected currency pair
+    if (currency1 !== currency2) {
+      fetch(`https://api.exchangerate-api.com/v4/latest/${currency1}`)
+        .then(response => response.json())
+        .then(data => {
+          setConverterRates(data.rates);
+        })
+        .catch(error => console.error('Error fetching converter rates:', error));
+    }
+  }, [currency1, currency2]);
 
   const handleBaseCurrencyChange = (event) => {
     const newBaseCurrency = event.target.value;
@@ -46,26 +47,18 @@ const CurrencyExchange = () => {
   const handleCurrency1Change = (event) => {
     const newCurrency = event.target.value;
     setCurrency1(newCurrency);
-    if (newCurrency === currency2) {
-      setCurrency2(currency1);
-      setAmount2(amount1);
-    }
   };
 
   const handleCurrency2Change = (event) => {
     const newCurrency = event.target.value;
     setCurrency2(newCurrency);
-    if (newCurrency === currency1) {
-      setCurrency1(currency2);
-      setAmount2(amount1);
-    }
   };
 
   const handleAmount2Change = (event) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
-      setAmount2(parseFloat(value.toFixed(2)));
-      setAmount1(parseFloat((value / converterRates[currency2]).toFixed(2)));
+      setAmount2(value);
+      setAmount1(parseFloat((value / converterRates[currency2]).toFixed(2))); // Round to 2 decimal places
     }
   };
 
