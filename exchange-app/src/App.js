@@ -20,6 +20,7 @@ const CurrencyExchange = () => {
   }, [baseCurrency]);
 
   useEffect(() => {
+    // Online exchange rate API for currency2
     fetch(`https://api.exchangerate-api.com/v4/latest/${currency1}`)
       .then(response => response.json())
       .then(data => {
