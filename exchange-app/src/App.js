@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 const CurrencyExchange = () => {
   const [baseCurrency, setBaseCurrency] = useState('USD');
@@ -8,6 +10,15 @@ const CurrencyExchange = () => {
   const [amount2, setAmount2] = useState(0);
   const [currency1, setCurrency1] = useState('USD');
   const [currency2, setCurrency2] = useState('EUR');
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [{
+      label: 'Exchange Rate',
+      data: [],
+      borderColor: 'rgba(75,192,192,1)',
+      fill: false,
+    }],
+  });
 
   useEffect(() => {
     // Online exchange rate API
@@ -20,7 +31,7 @@ const CurrencyExchange = () => {
   }, [baseCurrency]);
 
   useEffect(() => {
-    // Online exchange rate API for selected currency pair
+    // Online exchange rate API
     if (currency1 !== currency2) {
       fetch(`https://api.exchangerate-api.com/v4/latest/${currency1}`)
         .then(response => response.json())
@@ -31,7 +42,33 @@ const CurrencyExchange = () => {
     }
   }, [currency1, currency2]);
 
-  const handleBaseCurrencyChange = (event) => {
+  useEffect(() => {
+    const startDate = new Date('2023-05-01');
+    const endDate = new Date('2024-05-01');
+    const dateLabels = [];
+    const dateRates = [];
+
+    for (let d = startDate; d <= endDate; d.setMonth(d.getMonth() + 1)) {
+      const dateString = d.toISOString().split('T')[0];
+      dateLabels.push(dateString);
+      const rate = (Math.random() * (1.5 - 1.2) + 1.2).toFixed(2);
+      dateRates.push(rate);
+    }
+
+    // chart data
+    const ChartData = {
+      labels: dateLabels,
+      datasets: [{
+        label: `Exchange Rate ${currency1} to ${currency2}`,
+        data: dateRates,
+        borderColor: 'rgba(75,192,192,1)',
+        fill: false,
+      }],
+    };
+    setChartData(ChartData);
+  }, [converterRates, currency1, currency2]);
+
+  const BaseCurrencyChange = (event) => {
     const newBaseCurrency = event.target.value;
     setBaseCurrency(newBaseCurrency);
   };
@@ -44,12 +81,12 @@ const CurrencyExchange = () => {
     }
   };
 
-  const handleCurrency1Change = (event) => {
+  const LeftCurrency = (event) => {
     const newCurrency = event.target.value;
     setCurrency1(newCurrency);
   };
 
-  const handleCurrency2Change = (event) => {
+  const RightCurrency = (event) => {
     const newCurrency = event.target.value;
     setCurrency2(newCurrency);
   };
@@ -62,7 +99,7 @@ const CurrencyExchange = () => {
     }
   };
 
-  const clearInput = (event) => {
+  const ClearInput = (event) => {
     if (event.keyCode === 8 || event.keyCode === 46) {
       event.target.value = '';
       if (event.target.id === 'amount1') {
@@ -80,7 +117,7 @@ const CurrencyExchange = () => {
       <h1>Simple Currency Exchange</h1>
       <nav className="navbar">
         <label>Select Base Currency:</label>
-        <select value={baseCurrency} onChange={handleBaseCurrencyChange}>
+        <select value={baseCurrency} onChange={BaseCurrencyChange}>
           {majorCurrencies.map(currency => (
             <option key={currency} value={currency}>{currency}</option>
           ))}
@@ -98,20 +135,23 @@ const CurrencyExchange = () => {
         <h2>Currency Converter</h2>
         <div className="converter-input">
           <label>Amount:</label>
-          <input type="number" value={amount1} onChange={handleAmountChange} onKeyDown={clearInput} />
-          <select value={currency1} onChange={handleCurrency1Change}>
+          <input type="number" value={amount1} onChange={handleAmountChange} onKeyDown={ClearInput} />
+          <select value={currency1} onChange={LeftCurrency}>
             {majorCurrencies.map(currency => (
               <option key={currency} value={currency}>{currency}</option>
             ))}
           </select>
           <span>to</span>
-          <input type="number" value={amount2} onChange={handleAmount2Change} onKeyDown={clearInput} />
-          <select value={currency2} onChange={handleCurrency2Change}>
+          <input type="number" value={amount2} onChange={handleAmount2Change} onKeyDown={ClearInput} />
+          <select value={currency2} onChange={RightCurrency}>
             {majorCurrencies.filter(currency => currency !== currency1).map(currency => (
               <option key={currency} value={currency}>{currency}</option>
             ))}
           </select>
         </div>
+      </div>
+      <div className="chart">
+        <Line data={chartData} />
       </div>
       <footer>
         <p><a href="https://www.instagram.com/chipmonk02/?next=%2F">Instagram</a></p>

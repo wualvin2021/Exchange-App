@@ -64,3 +64,13 @@
 .exchange-rates ul li:nth-child(n+16) {
   display: none;
 }
+
+.chart {
+  margin: 20px auto;
+}
+
+@media screen and (max-width: 600px) {
+  .chart {
+    margin: 10px 0;
+  }
+}
